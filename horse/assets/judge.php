@@ -1,0 +1,106 @@
+<?php
+
+// Max: The judge panel was created primarily for the teachers, they will get to judge students and create competitions.
+// Admins are also able to access the judge panel.
+// Access for regular users is forbidden, instakick.
+
+session_start();
+
+include "dbconnect.php";
+
+if (!isset($_SESSION['email'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$email = $_SESSION['email'] ?? null;
+
+if ($email) {
+    $stmt = $conn->prepare("SELECT isjudge FROM userdata WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $isjudge = ($result->num_rows > 0) ? $result->fetch_assoc()['isjudge'] : 0;
+    $stmt->close();
+} else {
+    $isjudge = 0;
+}
+
+if ($email) {
+    $stmt = $conn->prepare("SELECT isadmin FROM userdata WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $isadmin = ($result->num_rows > 0) ? $result->fetch_assoc()['isadmin'] : 0;
+    $stmt->close();
+} else {
+    $isadmin = 0;
+}
+
+// Max: If not a single of the values is 1 - kick the user out to index.php
+
+if ($isjudge == 0 && $isadmin == 0) {
+    header("Location: index.php");
+    exit();
+}
+
+?>
+
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>S.T.E.P.</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/Header---Apple.css">
+    <link rel="stylesheet" href="assets/css/Pretty-Footer-.css">
+    <link rel="stylesheet" href="assets/css/Pretty-Header-.css">
+</head>
+
+
+<body>
+    <div></div>
+    <nav class="navbar navbar-expand-md fixed-top bg-dark navbar-dark">
+        <div class="container"><button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav flex-grow-1 justify-content-between">
+                    <li class="nav-item"><a class="nav-link" href="index.php"><i class="fas fa-horse-head apple-logo"></i></a></li>
+                    <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="competitions.php">Competitions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="window.location.href='admin.php'" style="color: rgb(255,106,106);">Admin Panel</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="window.location.href='judge.php'" style="color: rgb(255,106,106);">Judge Panel</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="window.location.href='logout.php'" style="color: rgb(255,106,106);">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+
+<body>
+    <div class="mt-5">
+            <div class="container text-center">
+                <div class="row mb-3">
+                    <div class="col offset-0 m-auto">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                            <button type="button" onclick="window.location.href='resetpassword.php'" >Create a competition</button>
+                        </div>
+                    </div>
+                </div>
+           </div>
+        </form>
+        </div>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+
+</html>
