@@ -1,9 +1,15 @@
 <?php
+
+// Max: The login page.
+
 include 'dbconnect.php';
 
 $message = "";
 $toastClass = "";
 
+// Max: After pressing the submit button, the code will compare the inserted password on the login page with the one in the database.
+// No voodoo here, obviously it would be dumb to compare a plain text with a hash directly, so there is a magic commmand from PHP that compares
+// passwords if hashing is involved - "password_verify".
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
@@ -22,17 +28,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $message = "Login successful";
             $toastClass = "bg-success";
 
+            // Max: session_start and the further code (before exit(); ) is the fundament of user sessions.
+            // If the password is correct and fits the email - we will assign the session with the email address that user provided.
+            // It's being stored in browser's cookie files.
+
             session_start();
             $_SESSION['email'] = $email;
-            header("Location: main.php");
+            header("Location: index.php");
             exit();
         } else {
-            $message = "Incorrect password";
+            $message = "Incorrect password or email";
             $toastClass = "bg-danger";
         }
     } else {
-        $message = "No users was found with the provided e-mail";
-        $toastClass = "bg-warning";
+        $message = "Incorrect password or email";      // Max: Previously I put here "No users was found with the provided e-mail", however I've decided to change it to
+        $toastClass = "bg-warning";                    // "Incorrect password or email", potenital hackers should not know if an account with the provided email exists or not.
     }
 
     $stmt->close();
@@ -47,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>HorseScratch</title>
+    <title>S.T.E.P.</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
     <link rel="stylesheet" href="assets/css/Header---Apple.css">
