@@ -1,10 +1,43 @@
 <?php
+
+// Max: Page with user's information and other settings.
+
 session_start();
+
+include "dbconnect.php";
+
+// Max: If user is not logged in and tries to access profile.php - kick them out.
 
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
     exit();
 }
+
+$email = $_SESSION['email'] ?? null;
+
+if ($email) {
+    $stmt = $conn->prepare("SELECT isadmin FROM userdata WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $isadmin = ($result->num_rows > 0) ? $result->fetch_assoc()['isadmin'] : 0;
+    $stmt->close();
+} else {
+    $isadmin = 0;
+}
+
+if ($email) {
+    $stmt = $conn->prepare("SELECT isjudge FROM userdata WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $isjudge = ($result->num_rows > 0) ? $result->fetch_assoc()['isjudge'] : 0;
+    $stmt->close();
+} else {
+    $isjudge = 0;
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +46,7 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>HorseScratch</title>
+    <title>S.T.E.P.</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
@@ -32,8 +65,13 @@ if (!isset($_SESSION['email'])) {
                     <li class="nav-item"><a class="nav-link" href="index.php"><i class="fas fa-horse-head apple-logo"></i></a></li>
                     <li class="nav-item"><a class="nav-link" href="profile.php" style="color: var(--bs-primary);">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="competitions.php">Competitions</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Notifications</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="rules.php">Rules</a></li>
+                <?php if($isadmin == 1): ?>
+                    <li class="nav-item"><a class="nav-link" onclick="window.location.href='admin.php'" style="color: rgb(255,106,106);">Admin Panel</a></li>
+                <?php endif; ?>
+                 <?php if($isadmin == 1 or $isjudge == 1): ?>
+                    <li class="nav-item"><a class="nav-link" onclick="window.location.href='judge.php'" style="color: rgb(255,106,106);">Judge Panel</a></li>
+                <?php endif; ?>
                     <li class="nav-item"><a class="nav-link" onclick="window.location.href='logout.php'" style="color: rgb(255,106,106);">Logout</a></li>
                 </ul>
             </div>
@@ -41,7 +79,6 @@ if (!isset($_SESSION['email'])) {
     </nav>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
-
 
 <body>
     <div class="mt-5">
@@ -56,7 +93,7 @@ if (!isset($_SESSION['email'])) {
                         </div>
                     </div>
                 </div>
-            </div>
+           </div>
         </form>
         </div>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
