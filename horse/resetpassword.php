@@ -1,8 +1,13 @@
 <?php
+
+// Max: While the reset password page is only accessible via the button in .profile.php - it is not limited ...
+// only to those who are logged in, anyone could access it simply by typing domain/resetpassword.php
+
 include "dbconnect.php";
 
 $message = "";
 $toastClass = "";
+
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -66,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>HorseScratch</title>
+    <title>S.T.E.P.</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cookie">
     <link rel="stylesheet" href="assets/css/Header---Apple.css">
@@ -102,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="row mt-3">
                     <div class="col">
-                            <button class="btn btn-secondary" name="back" id="back" type="button" onclick="window.location.href='main.php'" >Back</button>
+                            <button class="btn btn-secondary" name="back" id="back" type="button" onclick="window.location.href='index.php'" >Back</button>
                             <button class="btn btn-primary" name="reset_password_submit" id="reset_password_submit" type="submit">Submit</button>
                         </div>
                     </div>
